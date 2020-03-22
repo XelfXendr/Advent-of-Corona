@@ -1,2 +1,2 @@
 # Advent of Corona
- My solutions to [https://adventofcorona.hackersatupc.org/](Advent of Corona) puzzles
+ My solutions to [Advent of Corona](https://adventofcorona.hackersatupc.org/) puzzles
