@@ -5,22 +5,27 @@ use std::io::stdin;
 fn main() {
     const N: usize = 100;
 
+    //Console input
     println!("Starting column: ");
     let mut console_in: String = String::new();
     stdin().read_line(&mut console_in).expect("Error while reading console.");
     let sx: usize = console_in.trim().parse().expect("Error while parsing.");
+    
     println!("Starting row: ");
     console_in = String::new();
     stdin().read_line(&mut console_in).expect("Error while reading console.");
     let sy: usize = console_in.trim().parse().expect("Error while parsing.");
+    
     println!("Input map file: ");
     let mut input_file = String::new();
     stdin().read_line(&mut input_file).expect("Error while reading console.");
 
+    //reading file with map
     let input = read_to_string(input_file.trim()).expect("Error during reading.");
     let input: Vec<&str> = input.trim().split('\n').map(|x| x.trim()).collect();
     let mut map: [[Cell; N]; N] = [[Cell {discovered: false, blocked: false, is_c: false, distance: 0, hop: 0}; N]; N];
 
+    //parsing string map into 2d array of Cells
     for j in 0..100
     {
         let line = input[j].as_bytes();
@@ -30,6 +35,7 @@ fn main() {
                 b'X' => map[i][j].blocked = true,
                 b'I' => 
                 {
+                    //not checking if the I is on the edge, which could cause a crash, but idc it works
                     map[i-1][j].blocked = true;
                     map[i][j-1].blocked = true;
                     map[i+1][j].blocked = true;
@@ -63,6 +69,7 @@ fn main() {
             println!("Found target at distance {}, position {}, {}", map[cx][cy].distance, cx, cy);
             return;
         }
+
         //discover neighbours
         if cx > 0 && !map[cx-1][cy].discovered && !map[cx-1][cy].blocked
         {
@@ -89,7 +96,7 @@ fn main() {
             map[cx][cy+1].discovered = true;
         }
 
-        //shortcuts
+        //shortcuts (I expect the shortcuts to not lead out of the map, which could still cause an error)
         match map[cx][cy].hop
         {
             1 => if !map[cx][cy-3].blocked && !map[cx][cy-3].discovered
@@ -119,15 +126,16 @@ fn main() {
             _ => {}
         }
     }
-    println!("Haven't found any target");
+    println!("Haven't found any target: -1");
 }
 
+//Cell struct
 #[derive(Clone, Copy)]
 struct Cell
 {
-    discovered: bool,
-    blocked: bool,
-    is_c: bool,
-    distance: u32,
-    hop: u8,
+    discovered: bool, //has cell been discovered (used for BFS)
+    blocked: bool, //is cell blocked by X or by I
+    is_c: bool, //is it a target (C or H)
+    distance: u32, //distance to that node from origin (calculated by BFS)
+    hop: u8, //is it a shortcut (0=>no; 1=>up; 2=>down; 3=>left; 4=>right)
 }
