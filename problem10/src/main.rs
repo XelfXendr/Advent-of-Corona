@@ -1,7 +1,6 @@
 use std::io::stdin;
 
 fn main() {
-
     loop
     {
         println!("Enter a message to encrypt: ");
